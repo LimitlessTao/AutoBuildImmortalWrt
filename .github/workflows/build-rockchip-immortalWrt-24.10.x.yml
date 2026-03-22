@@ -94,8 +94,8 @@ on:
         default: 'no'
         type: choice
         options:
-          - 'yes'
-          - 'no'
+        - 'yes'
+        - 'no'
       pppoe_account:
         description: "宽带账号 (若启用PPPoE)"
         required: false
@@ -106,13 +106,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04
-    # 新增：强制使用 Node.js 24 环境，消除弃用警告
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4.2.0  # 升级到兼容Node.js24的最新版
+        uses: actions/checkout@v3
 
       - name: Set executable permissions
         run: chmod +x ${{ github.workspace }}/rockchip/build24.sh
@@ -122,6 +119,7 @@ jobs:
           mkdir -p "${{ github.workspace }}/custom"
           echo "${{ github.event.inputs.custom_router_ip }}" > "${{ github.workspace }}/custom/custom_router_ip.txt"
           echo "您设置的Rockchip软路由管理地址是:${{ github.event.inputs.custom_router_ip }}"
+          # 后续步骤会将该文件映射到路由器/etc/config/custom_router_ip.txt 以便用于开机脚本99-custom.sh读取用户设置的ip
       
       - name: Validate PPPoE Inputs
         run: |
@@ -135,7 +133,7 @@ jobs:
       - name: Check Docker
         run: |
           if [[ "${{ inputs.include_docker }}" == "yes" ]]; then
-             echo 'CUSTOM_PACKAGES="$CUSTOM_PACKAGES docker luci-app-docker luci-i18n-docker-zh-cn"' >> shell/custom-packages.sh
+             echo 'CUSTOM_PACKAGES="$CUSTOM_PACKAGES docker"' >> shell/custom-packages.sh
              echo "✅ 已为Rockchip平台补充 docker 组件"
           fi
       
@@ -147,26 +145,8 @@ jobs:
           else
             echo "❎ 未启用 luci-app-store"
           fi
-
-      # 新增：集成常用插件（避免手动安装兼容问题）
-      - name: Include Common Plugins (Fix Compatibility)
-        run: |
-          if [ "${{ github.event.inputs.include_common_plugins }}" == "true" ]; then
-            # 集成diskman（磁盘管理）+argon主题（原生兼容），避免手动安装报错
-            echo 'CUSTOM_PACKAGES="$CUSTOM_PACKAGES luci-app-diskman luci-i18n-diskman-zh-cn luci-theme-argon"' >> shell/custom-packages.sh
-            # 新增uci配置修复脚本，解决插件配置报错
-            mkdir -p ${{ github.workspace }}/files/etc/uci-defaults
-            cat > ${{ github.workspace }}/files/etc/uci-defaults/99-fix-uci-plugins.sh << EOF
-          #!/bin/sh
-          # 修复第三方插件uci配置语法
-          uci set luci.main.mediaurlbase='/luci-static/argon'
-          uci commit luci
-          rm -f /tmp/luci-*
-          EOF
-            chmod +x ${{ github.workspace }}/files/etc/uci-defaults/99-fix-uci-plugins.sh
-            echo "✅ 已集成常用插件并添加uci兼容修复脚本"
-          fi
           
+
       - name: Building Rockchip ImmortalWrt 24.10.x
         run: |
           profile="${{ github.event.inputs.profile }}"
@@ -191,6 +171,7 @@ jobs:
               -e PPPOE_PASSWORD=${{ inputs.pppoe_password }} \
           immortalwrt/imagebuilder:rockchip-armv8-openwrt-${luci_version} /bin/bash /home/build/immortalwrt/build.sh
         
+    
       - name: Create info
         run: |
           cat > ${{ github.workspace }}/router-info.md <<EOF
@@ -209,16 +190,11 @@ jobs:
             echo -e "\n#### 不带docker" >> ${{ github.workspace }}/router-info.md
           fi
 
-          # 补充插件信息
-          if [ "${{ github.event.inputs.include_common_plugins }}" == "true" ]; then
-            echo -e "\n#### 已集成：diskman磁盘管理、argon主题、store商店（若启用）" >> ${{ github.workspace }}/router-info.md
-          fi
-
       - name: Upload ImmortWrt as release assets
-        uses: softprops/action-gh-release@v2.0.8  # 升级到兼容Node.js24的最新版
+        uses: softprops/action-gh-release@v2.2.1
         with:
-          tag_name: Autobuild-${{ github.run_id }}  # 避免tag重复导致发布失败
-          name: ImmortWrt-Rockchip-${{ github.event.inputs.profile }}
+          tag_name: Autobuild
+          name: ImmortWrt-Rockchip
           body_path: ${{ github.workspace }}/router-info.md
           files: |
             ${{ github.workspace }}/bin/targets/rockchip/armv8/*.img.gz
