@@ -109,7 +109,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set executable permissions
         run: chmod +x ${{ github.workspace }}/rockchip/build24.sh
@@ -191,7 +191,7 @@ jobs:
           fi
 
       - name: Upload ImmortWrt as release assets
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2.2.1
         with:
           tag_name: Autobuild
           name: ImmortWrt-Rockchip
