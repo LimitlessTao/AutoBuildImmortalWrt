@@ -11,17 +11,17 @@ echo "Building for profile: $PROFILE"
 echo "Building for ROOTFS_PARTSIZE: $ROOTFS_PARTSIZE"
 
 echo "Create pppoe-settings"
-mkdir -p  /home/build/immortalwrt/files/etc/config
+mkdir -p  /home/build/immortalwrt/files/var/run
 
 # 创建pppoe配置文件 yml传入环境变量ENABLE_PPPOE等 写入配置文件 供99-custom.sh读取
-cat << EOF > /home/build/immortalwrt/files/etc/config/pppoe-settings
+cat << EOF > /home/build/immortalwrt/files/var/run/pppoe-settings
 enable_pppoe=${ENABLE_PPPOE}
 pppoe_account=${PPPOE_ACCOUNT}
 pppoe_password=${PPPOE_PASSWORD}
 EOF
 
 echo "cat pppoe-settings"
-cat /home/build/immortalwrt/files/etc/config/pppoe-settings
+cat /home/build/immortalwrt/files/var/run/pppoe-settings
 
 if [ -z "$CUSTOM_PACKAGES" ]; then
   echo "⚪️ 未选择 任何第三方软件包"
