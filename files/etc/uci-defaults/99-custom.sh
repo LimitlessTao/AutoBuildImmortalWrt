@@ -26,7 +26,7 @@ uci set "dhcp.@domain[-1].name=time.android.com"
 uci set "dhcp.@domain[-1].ip=203.107.6.88"
 
 # 检查配置文件pppoe-settings是否存在 该文件由build.sh动态生成
-SETTINGS_FILE="/etc/config/pppoe-settings"
+SETTINGS_FILE="/var/run/pppoe-settings"
 if [ ! -f "$SETTINGS_FILE" ]; then
     echo "PPPoE settings file not found. Skipping." >>$LOGFILE
 else
@@ -109,7 +109,7 @@ elif [ "$count" -gt 1 ]; then
     # 多网口设备 支持修改为别的管理后台地址 在Github Action 的UI上自行输入即可 
     uci set network.lan.netmask='255.255.255.0'
     # 设置路由器管理后台地址
-    IP_VALUE_FILE="/etc/config/custom_router_ip.txt"
+    IP_VALUE_FILE="/var/run/custom_router_ip.txt"
     if [ -f "$IP_VALUE_FILE" ]; then
         CUSTOM_IP=$(cat "$IP_VALUE_FILE")
         # 用户在UI上设置的路由器后台管理地址
