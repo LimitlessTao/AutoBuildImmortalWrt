@@ -52,7 +52,7 @@ PACKAGES="$PACKAGES openssh-sftp-server"
 # PACKAGES="$PACKAGES luci-i18n-diskman-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-package-manager-zh-cn"
 PACKAGES="$PACKAGES luci-i18n-firewall-zh-cn"
-# PACKAGES="$PACKAGES luci-i18n-cpufreq-zh-cn"
+PACKAGES="$PACKAGES luci-i18n-cpufreq-zh-cn"
 PACKAGES="$PACKAGES luci-theme-argon"
 # PACKAGES="$PACKAGES luci-app-argon-config"
 # PACKAGES="$PACKAGES luci-i18n-argon-config-zh-cn"
@@ -79,6 +79,7 @@ echo "$PACKAGES"
 if echo "$PACKAGES" | grep -q "luci-app-openclash"; then
     echo "✅ 已选择 luci-app-openclash，添加 openclash core"
     mkdir -p files/etc/openclash/core
+    mkdir -p files/etc/openclash/config 
     # Download clash_meta
     META_URL="https://raw.githubusercontent.com/vernesong/OpenClash/core/master/smart/clash-linux-arm64.tar.gz"
     wget -qO- $META_URL | tar xOvz > files/etc/openclash/core/clash_meta
