@@ -23,11 +23,11 @@ uptime_str="${days}天 ${hours}小时 ${mins}分钟"
 
 # ===================== 网络IP信息获取 =====================
 # 获取局域网IPv4地址
-lan_ip4="$(ip -4 addr show br-lan 2>/dev/null | grep 'inet ' | head -n1 | awk '{print $2}' | cut -d/ -f1)"
+lan_ip4=$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | cut -d/ -f1 | head -n1)
 [ -z "$lan_ip4" ] && lan_ip4="未获取"
 
 # 获取局域网IPv6地址（过滤本地链路地址）
-lan_ip6="$(ip -6 addr show br-lan 2>/dev/null | grep 'inet6 ' | grep -v '::1/' | grep -v 'fe80::' | head -n1 | awk '{print $2}' | cut -d/ -f1)"
+lan_ip6=$(ip addr show | grep 'inet6 ' | grep -v '::1/128' | awk '{print $2}' | cut -d/ -f1 | head -n1)
 [ -z "$lan_ip6" ] && lan_ip6="未获取"
 
 # ===================== 系统负载监控 =====================
