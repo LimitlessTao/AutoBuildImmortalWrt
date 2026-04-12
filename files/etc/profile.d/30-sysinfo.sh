@@ -110,7 +110,7 @@ kernel="$(uname -r)"  # 内核版本
 echo ""
 printf "HeiCatWrt 已经持续稳定运行了:  %s\n" "$uptime_str"
 echo ""
-printf "IPv4地址:   %-26s    IPv6地址:   %s\n" "$lan_ip4" "$lan_ip6"
+printf "IPv4地址:   %-23s    IPv6地址:   %s\n" "$lan_ip4" "$lan_ip6"
 printf "系统负载:   ${color_load}%-23s${RESET}    内存占用:   ${color_mem}%s${RESET}\n" "$load" "$mem_str"
 printf "系统存储:   ${color_storage}%-23s${RESET}    CPU 信息:   %s × %s" "$storage_str" "$cpu_model" "$cpu_cores"
 
