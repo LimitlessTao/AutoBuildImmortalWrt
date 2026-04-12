@@ -1,11 +1,12 @@
 #!/bin/sh
-# ImmortalWrt 系统信息展示脚本 | 对齐/温度/版本/运行时长 已全部优化完成
+# ImmortalWrt 系统信息展示脚本 | 对齐/温度/版本/运行时长/颜色 已全部优化完成
 
 # 定义终端输出颜色
-GREEN="\033[32m"   # 绿色（正常状态）
-YELLOW="\033[33m"  # 黄色（警告状态）
-RED="\033[31m"     # 红色（异常状态）
-RESET="\033[0m"    # 重置颜色
+GREEN=$(printf "\033[32m")
+YELLOW=$(printf "\033[33m")
+RED=$(printf "\033[91m")
+RESET=$(printf "\033[0m")
+MAGENTA=$(printf "\033[35m")
 
 # ===================== 系统运行时长解析 =====================
 uptime_output=$(uptime | sed -n 's/.*up //p' | sed -n 's/,.*load.*//p')
@@ -110,18 +111,18 @@ kernel="$(uname -r)"  # 内核版本
 echo ""
 printf "HeiCatWrt 已经持续稳定运行了:  %s\n" "$uptime_str"
 echo ""
-printf "IPv4地址:   %-23s    IPv6地址:   %s\n" "$lan_ip4" "$lan_ip6"
+printf "IPv4地址:   ${MAGENTA}%-23s${RESET}    IPv6地址:   ${MAGENTA}%s${RESET}\n" "$lan_ip4" "$lan_ip6"
 printf "系统负载:   ${color_load}%-23s${RESET}    内存占用:   ${color_mem}%s${RESET}\n" "$load" "$mem_str"
 printf "系统存储:   ${color_storage}%-23s${RESET}    CPU 信息:   %s × %s" "$storage_str" "$cpu_model" "$cpu_cores"
 
 # 温度颜色输出（无传感器则不显示）
 if [ "$has_temp" = 1 ]; then
     if [ "$temp_val" -gt 70 ]; then
-        printf " | \033[31m%d°C\033[0m" "$temp_val"
+        printf " | ${RED}%d°C${RESET}" "$temp_val"
     elif [ "$temp_val" -ge 60 ]; then
-        printf " | \033[33m%d°C\033[0m" "$temp_val"
+        printf " | ${YELLOW}%d°C${RESET}" "$temp_val"
     else
-        printf " | \033[32m%d°C\033[0m" "$temp_val"
+        printf " | ${GREEN}%d°C${RESET}" "$temp_val"
     fi
 fi
 printf "\n"
