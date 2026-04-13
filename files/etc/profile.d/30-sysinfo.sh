@@ -1,7 +1,7 @@
 #!/bin/sh
 # ImmortalWrt 系统信息展示脚本 | 对齐/温度/版本/运行时长/颜色 已全部优化完成
 
-# 定义终端输出颜色
+# 定义终端输出颜色（用printf生成真正的ESC字符，BusyBox ash 100%兼容）
 GREEN=$(printf "\033[32m")
 YELLOW=$(printf "\033[33m")
 RED=$(printf "\033[91m")
@@ -24,12 +24,10 @@ uptime_str="${days}天 ${hours}小时 ${mins}分钟"
 
 # ===================== 网络IP信息获取 =====================
 # 获取局域网IPv4地址
-lan_ip4=$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | cut -d/ -f1 | head -n1)
-[ -z "$lan_ip4" ] && lan_ip4="未获取"
+lan_ip4=$(ip addr show | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | cut -d/ -f1 | head -n1 || echo "未获取")
 
-# 获取局域网IPv6地址（过滤本地链路地址）
-lan_ip6=$(ip addr show | grep 'inet6 ' | grep -v '::1/128' | awk '{print $2}' | cut -d/ -f1 | head -n1)
-[ -z "$lan_ip6" ] && lan_ip6="未获取"
+# 获取局域网IPv6地址
+lan_ip6=$(ip addr show | grep 'inet6 ' | grep -v '::1/128' | awk '{print $2}' | cut -d/ -f1 | head -n1 || echo "未获取")
 
 # ===================== 系统负载监控 =====================
 core=$(grep -c processor /proc/cpuinfo)  # CPU核心数
@@ -81,6 +79,8 @@ if [ -r /sys/class/thermal/thermal_zone0/temp ]; then
     raw=$(cat /sys/class/thermal/thermal_zone0/temp 2>/dev/null)
     temp_val=$((raw / 1000))
     has_temp=1
+else
+    temperature_info="传感器未识别"
 fi
 
 # ===================== 设备硬件信息 =====================
@@ -124,6 +124,8 @@ if [ "$has_temp" = 1 ]; then
     else
         printf " | ${GREEN}%d°C${RESET}" "$temp_val"
     fi
+else
+    printf " | 温度传感器未识别"
 fi
 printf "\n"
 
