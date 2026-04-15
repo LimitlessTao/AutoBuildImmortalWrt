@@ -93,6 +93,7 @@ else
 fi
 
 
+rm -f /etc/profile.d/apk-cheatsheet.sh
 make image PROFILE=$PROFILE PACKAGES="$PACKAGES" FILES="/home/build/immortalwrt/files" ROOTFS_PARTSIZE=$ROOTFS_PARTSIZE
 
 if [ $? -ne 0 ]; then
@@ -101,4 +102,3 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Build completed successfully."
-rm -f /etc/profile.d/apk-cheatsheet.sh
