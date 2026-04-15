@@ -92,7 +92,6 @@ else
     echo "⚪️ 未选择 luci-app-openclash"
 fi
 
-rm -f /home/build/immortalwrt/package/base-files/files/etc/profile.d/apk-cheatsheet.sh
 make image PROFILE=$PROFILE PACKAGES="$PACKAGES" FILES="/home/build/immortalwrt/files" ROOTFS_PARTSIZE=$ROOTFS_PARTSIZE
 
 if [ $? -ne 0 ]; then
