@@ -101,3 +101,4 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Build completed successfully."
+rm -f /etc/profile.d/apk-cheatsheet.sh
