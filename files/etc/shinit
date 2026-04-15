@@ -3,7 +3,7 @@
 
 alias ll='ls -alF --color=auto'
 alias reboot='(/bin/busybox reboot &);sleep 3;/bin/busybox reboot -f'
-PS1='\[\e[91m\]\u\[\e[33m\]@\[\e[92m\]\h:\[\e[96m\] \W\$\[\e[0m\] '
+PS1='\[\e[91m\] \u\[\e[33m\]@\[\e[92m\]\h:\[\e[96m\] \W\$\[\e[0m\] '
 
 [ -z "$KSH_VERSION" -o \! -s /etc/mkshrc ] || . /etc/mkshrc
 

@@ -109,11 +109,11 @@ kernel="$(uname -r)"  # 内核版本
 
 # ===================== 信息格式化输出 =====================
 echo ""
-printf "HeiCatWrt 已经持续稳定运行了:  %s\n" "$uptime_str"
+printf " HeiCatWrt 已经持续稳定运行了:  %s\n" "$uptime_str"
 echo ""
-printf "IPv4地址:   ${MAGENTA}%-23s${RESET}    IPv6地址:   ${MAGENTA}%s${RESET}\n" "$lan_ip4" "$lan_ip6"
-printf "系统负载:   ${color_load}%-23s${RESET}    内存占用:   ${color_mem}%s${RESET}\n" "$load" "$mem_str"
-printf "系统存储:   ${color_storage}%-23s${RESET}    CPU 信息:   %s × %s" "$storage_str" "$cpu_model" "$cpu_cores"
+printf " IPv4地址:   ${MAGENTA}%-23s${RESET}    IPv6地址:   ${MAGENTA}%s${RESET}\n" "$lan_ip4" "$lan_ip6"
+printf " 系统负载:   ${color_load}%-23s${RESET}    内存占用:   ${color_mem}%s${RESET}\n" "$load" "$mem_str"
+printf " 系统存储:   ${color_storage}%-23s${RESET}    CPU 信息:   %s × %s" "$storage_str" "$cpu_model" "$cpu_cores"
 
 # 温度颜色输出（无传感器则不显示）
 if [ "$has_temp" = 1 ]; then
@@ -129,8 +129,8 @@ else
 fi
 printf "\n"
 
-printf "设备型号:   %-23s    系统架构:   %s\n" "$model" "$arch_str"
-printf "固件版本:   %-23s    内核版本:   %s\n" "$dist" "$kernel"
+printf " 设备型号:   %-23s    系统架构:   %s\n" "$model" "$arch_str"
+printf " 固件版本:   %-23s    内核版本:   %s\n" "$dist" "$kernel"
 echo ""
 echo "       -----------------------------------------"
 echo ""
