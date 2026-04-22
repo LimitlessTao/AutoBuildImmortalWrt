@@ -9,17 +9,24 @@ RESET=$(printf "\033[0m")
 MAGENTA=$(printf "\033[35m")
 
 # ===================== 系统运行时长解析 =====================
-uptime_output=$(uptime | sed -n 's/.*up //p' | sed -n 's/,.*load.*//p')
-days=$(echo "$uptime_output" | grep -o '[0-9]* day' | awk '{print $1}')
-hours=$(echo "$uptime_output" | grep -o '[0-9]*:[0-9]*' | cut -d: -f1)
-mins=$(echo "$uptime_output" | grep -o '[0-9]*:[0-9]*' | cut -d: -f2)
-[ -z "$mins" ] && mins=$(echo "$uptime_output" | grep -o '[0-9]* min' | awk '{print $1}')
+raw=$(uptime)
+days=0
+hours=0
+mins=0
 
-# 空值默认补0，避免显示异常
-days=${days:-0}
-hours=${hours:-0}
-mins=${mins:-0}
-# 拼接运行时长字符串
+# 提取天数
+echo "$raw" | grep -qE ' [0-9]+ days?,' && \
+days=$(echo "$raw" | sed -E 's/.* up ([0-9]+) days?.*/\1/')
+
+# 提取 小时:分钟
+if echo "$raw" | grep -qE ', *[0-9]+:[0-9]+,'; then
+  hm=$(echo "$raw" | sed -E 's/.*, *([0-9]+:[0-9]+),.*/\1/')
+  hours=$(echo "$hm" | cut -d: -f1)
+  mins=$(echo "$hm" | cut -d: -f2)
+elif echo "$raw" | grep -qE ' [0-9]+ min,'; then
+  mins=$(echo "$raw" | sed -E 's/.* ([0-9]+) min,.*/\1/')
+fi
+
 uptime_str="${days}天 ${hours}小时 ${mins}分钟"
 
 # ===================== 网络IP信息获取 =====================
@@ -109,11 +116,11 @@ kernel="$(uname -r)"  # 内核版本
 
 # ===================== 信息格式化输出 =====================
 echo ""
-printf "HeiCatWrt 已经持续稳定运行了:  %s\n" "$uptime_str"
+printf " HeiCatWrt 已经持续稳定运行了:  %s\n" "$uptime_str"
 echo ""
-printf "IPv4地址:   ${MAGENTA}%-23s${RESET}    IPv6地址:   ${MAGENTA}%s${RESET}\n" "$lan_ip4" "$lan_ip6"
-printf "系统负载:   ${color_load}%-23s${RESET}    内存占用:   ${color_mem}%s${RESET}\n" "$load" "$mem_str"
-printf "系统存储:   ${color_storage}%-23s${RESET}    CPU 信息:   %s × %s" "$storage_str" "$cpu_model" "$cpu_cores"
+printf " IPv4地址:   ${MAGENTA}%-23s${RESET}    IPv6地址:   ${MAGENTA}%s${RESET}\n" "$lan_ip4" "$lan_ip6"
+printf " 系统负载:   ${color_load}%-23s${RESET}    内存占用:   ${color_mem}%s${RESET}\n" "$load" "$mem_str"
+printf " 系统存储:   ${color_storage}%-23s${RESET}    CPU 信息:   %s × %s" "$storage_str" "$cpu_model" "$cpu_cores"
 
 # 温度颜色输出（无传感器则不显示）
 if [ "$has_temp" = 1 ]; then
@@ -129,8 +136,8 @@ else
 fi
 printf "\n"
 
-printf "设备型号:   %-23s    系统架构:   %s\n" "$model" "$arch_str"
-printf "固件版本:   %-23s    内核版本:   %s\n" "$dist" "$kernel"
+printf " 设备型号:   %-23s    系统架构:   %s\n" "$model" "$arch_str"
+printf " 固件版本:   %-23s    内核版本:   %s\n" "$dist" "$kernel"
 echo ""
 echo "       -----------------------------------------"
 echo ""
